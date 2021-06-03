@@ -1,55 +1,56 @@
 import gql from 'graphql-tag';
 
 export const LOGIN_USER = gql`
-  mutation loginUser($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      token
-      user {
-        _id
-        username
-      }
+mutation loginUser($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    token
+    user {
+      _id
     }
   }
+}
 `;
 
 export const ADD_USER = gql`
 mutation addUser($username: String!, $password: String!, $email: String!) {
-    addUser(username: $username, password: $password, email: $email) {
-        user {
-        _id
-        username
-        email
-        bookCount
-        urFavBooks {
-            _id
-            authors
-            bookId
-            image
-            link
-            title
-            description
-        }
-        }
-        token
+  addUser(username: $username, password: $password, email: $email) {
+    
+    user {
+      _id
+      username
+      email
+      bookCount
+      urFavBooks{
+        authors
+        bookId
+        image
+        link
+        title
+        description
+      }
     }
+    token
+  }
 }
 `;
 
 export const FAV_BOOK = gql`
-  mutation saveBook($description: String!) {
-    saveBook(description: $description) {
+mutation saveBook($input: savedBook!) {
+  saveBook (input: $input)
+    {
       _id
-      bookId
-      authors
-      description
-      title
-      image
-      link
+      username
+      email
       bookCount
-      urFavBooks {
-          _id
+      urFavBooks{
+          # _id
+          bookId
+          authors
+          image
+          link
+          title
+          description
       }
-      
     }
   }
 `;
@@ -57,7 +58,19 @@ export const FAV_BOOK = gql`
 export const DUMP_BOOK = gql`
 mutation dumpBook($bookId: String!) {
     dumpBook(bookId:$bookId) {
-        bookId
-    }
+            _id
+            username
+            email
+            bookCount
+            urFavBooks{
+                # _id
+                bookId
+                authors
+                image
+                link
+                title
+                description
+            }
+        }
 }
 `;

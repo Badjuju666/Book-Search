@@ -5,17 +5,16 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import Auth from '../utils/auth';
 import { dumpBookId } from '../utils/localStorage';
 import { DUMP_BOOK } from '../utils/mutations';
-import { QUERY_ME } from '../utils/queries';
+import { SEE_ME } from '../utils/queries';
 
 const FavoriteBooks = () => {
   // const [userData, setUserData] = useState({});
-  const { loading, data } = useQuery(QUERY_ME);
+  const { loading, data } = useQuery(SEE_ME);
   // eslint-disable-next-line
   const [dumpBook, { error }] = useMutation(DUMP_BOOK);
 
   const userData = data?.me || {};
 
-  
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -24,7 +23,6 @@ const FavoriteBooks = () => {
     }
 
     try {
-      // eslint-disable-next-line
       const { data } = await dumpBook({
         variables: { bookId },
       });
@@ -35,7 +33,6 @@ const FavoriteBooks = () => {
     }
   }; 
 
-  
   if (loading) {
     return <h2>LOADING...</h2>;
   }

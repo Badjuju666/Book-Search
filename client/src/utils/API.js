@@ -1,5 +1,5 @@
 
-export const getMe = (token) => {
+export const seeMe = (token) => {
   return fetch('/api/users/me', {
     headers: {
       'Content-Type': 'application/json',
