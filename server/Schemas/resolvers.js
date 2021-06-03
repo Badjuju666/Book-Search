@@ -5,13 +5,16 @@ const { signToken } = require('../utils/auth');
 const resolvers = {
     Query: {
         me: async (parent, args, context) => {
-            if (context.user) {
-                const userData = await User.findOne({ _id: context.user._id })
-                    .select('-__v -password')
+
+            if(context.user) {
+                const userData = await User.findOne({})
+                .select('-__v -password')
+                .populate('books')
+            
                 return userData;
             }
-            throw new AuthenticationError('Please! You are not logged in!');
-        }
+            throw new AuthenticationError('Not logged in')
+        },
     },
 
     Mutation: {
@@ -35,11 +38,11 @@ const resolvers = {
         addUser: async (parent, args) => {
             const user = await User.create(args);
             const token = signToken(user);
-
-            return { token, user };
+          
+            return {token, user};
         },
 
-        saveBook: async (parent, { input }, context) => {
+        favBook: async (parent, { input }, context) => {
             if (context.user) {
                 const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },

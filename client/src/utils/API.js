@@ -29,7 +29,7 @@ export const loginUser = (userData) => {
 };
 
 
-export const saveBook = (bookData, token) => {
+export const favBook = (bookData, token) => {
   return fetch('/api/users', {
     method: 'PUT',
     headers: {

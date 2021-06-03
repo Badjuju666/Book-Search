@@ -15,7 +15,7 @@ const SearchBooks = () => {
 
   const [savedBookIds, setSavedBookIds] = useState(getFavBookIds());
 
-  const [saveBook, { error }] = useMutation(FAV_BOOK);
+  const [favBook, { error }] = useMutation(FAV_BOOK);
 
   useEffect(() => {
     return () => favBookIds(savedBookIds);
@@ -62,7 +62,7 @@ const SearchBooks = () => {
 
     try {
       // eslint-disable-next-line 
-      const { data } = await saveBook({
+      const { data } = await favBook({
         variables: { bookData: { ...bookToSave } },
       });
       console.log(savedBookIds);
