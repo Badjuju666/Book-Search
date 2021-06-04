@@ -14,7 +14,7 @@ const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
 
   const [savedBookIds, setSavedBookIds] = useState(getFavBookIds());
-
+// eslint-disable-next-line
   const [favBook, { error }] = useMutation(FAV_BOOK);
 
   useEffect(() => {

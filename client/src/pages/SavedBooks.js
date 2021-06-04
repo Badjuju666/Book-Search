@@ -23,6 +23,7 @@ const FavoriteBooks = () => {
     }
 
     try {
+      // eslint-disable-next-line
       const { data } = await dumpBook({
         variables: { bookId },
       });
