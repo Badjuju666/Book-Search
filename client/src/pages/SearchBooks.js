@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
-
-import { useMutation } from '@apollo/react-hooks';
-import { FAV_BOOK } from '../utils/mutations';
-import { favBookIds, getFavBookIds } from '../utils/localStorage';
-
 import Auth from '../utils/auth';
+
+import { favBook, searchGoogleBooks } from '../utils/API';
+import { favBookIds, getFavsBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
 
@@ -13,12 +11,10 @@ const SearchBooks = () => {
 
   const [searchInput, setSearchInput] = useState('');
 
-  const [savedBookIds, setSavedBookIds] = useState(getFavBookIds());
-// eslint-disable-next-line
-  const [favBook, { error }] = useMutation(FAV_BOOK);
+  const [favsBookIds, setFavsBookIds] = useState(getFavsBookIds());
 
   useEffect(() => {
-    return () => favBookIds(savedBookIds);
+    return () => favBookIds(favsBookIds);
   });
 
   const handleFormSubmit = async (event) => {
@@ -29,7 +25,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
+      const response = await searchGoogleBooks(searchInput);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
@@ -61,12 +57,13 @@ const SearchBooks = () => {
     }
 
     try {
-      // eslint-disable-next-line 
-      const { data } = await favBook({
-        variables: { bookData: { ...bookToSave } },
-      });
-      console.log(savedBookIds);
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+      const response = await favBook(bookToSave, token);
+
+      if (!response.ok) {
+        throw new Error('something went wrong!');
+      }
+
+      setFavsBookIds([...favsBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
     }
@@ -117,10 +114,10 @@ const SearchBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   {Auth.loggedIn() && (
                     <Button
-                      disabled={savedBookIds?.some((savedId) => savedId === book.bookId)}
+                      disabled={favsBookIds?.some((favId) => favId === book.bookId)}
                       className='btn-block btn-info'
                       onClick={() => handleSaveBook(book.bookId)}>
-                      {savedBookIds?.some((savedId) => savedId === book.bookId)
+                      {favsBookIds?.some((favId) => favId === book.bookId)
                         ? 'Book Already Saved!'
                         : 'Save This Book!'}
                     </Button>

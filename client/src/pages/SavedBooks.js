@@ -42,14 +42,14 @@ const FavoriteBooks = () => {
     <>
       <Jumbotron fluid className='text-light bg-dark'>
         <Container>
-          <h1>Viewing saved books!</h1>
+          <h1>Viewing fav books!</h1>
         </Container>
       </Jumbotron>
       <Container>
         <h2>
           {userData.urFavBooks.length
-            ? `Viewing ${userData.urFavBooks.length} saved ${userData.urFavBooks.length === 1 ? 'book' : 'books'}:`
-            : 'You have no saved books!'}
+            ? `Viewing ${userData.urFavBooks.length} fav ${userData.urFavBooks.length === 1 ? 'book' : 'books'}:`
+            : 'You have no fav books!'}
         </h2>
         <CardColumns>
           {userData.urFavBooks.map((book) => {

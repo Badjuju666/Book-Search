@@ -22,7 +22,6 @@ const userSchema = new Schema(
     
     urFavBooks: [bookSchema],
   },
-
   {
     toJSON: {
       virtuals: true,

@@ -7,7 +7,7 @@ const resolvers = {
         me: async (parent, args, context) => {
 
             if(context.user) {
-                const userData = await User.findOne({})
+                const userData = await User.findOne({ _id: context.user._id })
                 .select('-__v -password')
                 .populate('books')
             
@@ -22,13 +22,13 @@ const resolvers = {
             const user = await User.findOne({ email });
 
             if (!user) {
-                throw new AuthenticationError('Incorrect credentials');
+                throw new AuthenticationError('Try Again');
             }
 
             const correctPw = await user.isCorrectPassword(password);
 
             if (!correctPw) {
-                throw new AuthenticationError('Incorrect credentials');
+                throw new AuthenticationError('Try Again');
             }
 
             const token = signToken(user);
@@ -46,11 +46,12 @@ const resolvers = {
             if (context.user) {
                 const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { urFavBooks: input } },
+                    { $push: { urFavBooks: bookData } },
                     { new: true }
                 );
                 return updatedUser;
             }
+
             throw new AuthenticationError('Please! You are not logged in!');
         },
 
@@ -58,14 +59,14 @@ const resolvers = {
             if (context.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { urFavBooks: { bookId: args.bookId } } },
+                    { $pull: { urFavBooks: { bookId } } },
                     { new: true }
                 );
                 return updatedUser;
             }
             throw new AuthenticationError('Please! You are not logged in!');
-        }
-    }
+        },
+    },
 };
 
 module.exports = resolvers;

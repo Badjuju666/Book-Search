@@ -17,5 +17,6 @@ export const SEE_ME = gql`
         description
     }
   }
+}
 `;
 
