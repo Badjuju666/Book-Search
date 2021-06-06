@@ -1,28 +1,31 @@
-// React Imports here!!!
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
 
 import Auth from '../utils/auth';
-import { savedBook } from '../utils/mutations';
-import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { searchGoogleBooks } from '../utils/API';
 import { useMutation } from '@apollo/react-hooks';
 import { SAVE_BOOK } from '../utils/mutations';
+import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
-  
+  // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
-  
+  // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
-
-  
+  // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
+  // create state to hold call to action message
+  const [message, setMessage] = useState('Search for a book to begin')
+  // saveBook Mutation
+  const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
-  const [savedBook, err] = useMutation(SAVE_BOOK);
-
+  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
+  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
 
+  // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
@@ -31,24 +34,42 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await fetch (`https://www.googleapis.com/books/v1/volumes?q=$'${searchInput}`);
+      const response = await searchGoogleBooks(searchInput);
 
       if (!response.ok) {
+        setMessage('No books found. Try another search')
         throw new Error('something went wrong!');
       }
 
       const { items } = await response.json();
 
-      const bookData = items.map((book) => ({
-        bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
-      }));
+      let uniqueItems = [];
+      let ids = []
 
-      setSearchedBooks(bookData);
-      setSearchInput('');
+      for (let i = 0; i < items.length; i++) {
+        if (!ids.includes(items[i].id)) {
+          uniqueItems.push(items[i]);
+        }
+        
+        ids.push(items[i].id);
+      }
+
+      if (!uniqueItems) {
+        setMessage('No books found. Try another search')
+        setSearchedBooks([]);
+      } else {
+        const bookData = uniqueItems.map(({ id, volumeInfo, saleInfo, accessInfo }) => ({
+          bookId: id,
+          authors: volumeInfo.authors || ['No author to display'],
+          title: volumeInfo.title || '',
+          description: volumeInfo.description || `published: ${volumeInfo.publishedDate}, ${volumeInfo.publisher}. Tags: ${volumeInfo.categories ? volumeInfo.categories : 'none'}.` || '',
+          image: volumeInfo.imageLinks?.thumbnail || '',
+          link: saleInfo.buyLink || accessInfo.webReaderLink
+        }));
+
+        setSearchedBooks(bookData);
+        setSearchInput('');
+      }
     } catch (err) {
       console.error(err);
     }
@@ -67,11 +88,15 @@ const SearchBooks = () => {
     }
 
     try {
-      const data = await savedBook({
-        variables: {bookData:{...bookToSave}}
+      await saveBook({
+        variables: {
+          input: { ...bookToSave }
+        }
       });
 
-   
+      if (error) {
+        throw new Error('something went wrong!');
+      }
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
@@ -79,7 +104,6 @@ const SearchBooks = () => {
       console.error(err);
     }
   };
-
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>
