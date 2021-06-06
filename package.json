@@ -2,9 +2,12 @@
   "name": "googlebooks-app",
   "version": "1.0.0",
   "description": "",
-  "main": "server/server.js",
+  "main": "server/server.js", 
+  "engines": {
+    "node": "12.11.1" 
+},
   "scripts": {
-    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev\"nodemon --exec babel-node src/server.js",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:prod": "cd server && npm start",
     "start:dev": "concurrently \"cd server && npm run watch\" \"cd client && npm start\"",
     "install": "cd server && npm i && cd ../client && npm i",
