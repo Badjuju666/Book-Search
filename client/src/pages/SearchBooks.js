@@ -1,20 +1,26 @@
+// React Imports here!!!
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
-import Auth from '../utils/auth';
 
-import { favBook, searchGoogleBooks } from '../utils/API';
-import { favBookIds, getFavsBookIds } from '../utils/localStorage';
+import Auth from '../utils/auth';
+import { savedBook } from '../utils/mutations';
+import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { useMutation } from '@apollo/react-hooks';
+import { SAVE_BOOK } from '../utils/mutations';
 
 const SearchBooks = () => {
-
+  
   const [searchedBooks, setSearchedBooks] = useState([]);
-
+  
   const [searchInput, setSearchInput] = useState('');
 
-  const [favsBookIds, setFavsBookIds] = useState(getFavsBookIds());
+  
+  const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
+
+  const [savedBook, err] = useMutation(SAVE_BOOK);
 
   useEffect(() => {
-    return () => favBookIds(favsBookIds);
+    return () => saveBookIds(savedBookIds);
   });
 
   const handleFormSubmit = async (event) => {
@@ -25,7 +31,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await searchGoogleBooks(searchInput);
+      const response = await fetch (`https://www.googleapis.com/books/v1/volumes?q=$'${searchInput}`);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
@@ -48,8 +54,12 @@ const SearchBooks = () => {
     }
   };
 
+  // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
+    // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+
+    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -57,17 +67,19 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await favBook(bookToSave, token);
+      const data = await savedBook({
+        variables: {bookData:{...bookToSave}}
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+   
 
-      setFavsBookIds([...favsBookIds, bookToSave.bookId]);
+      // if book successfully saves to user's account, save book id to state
+      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
     }
   };
+
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>
@@ -114,12 +126,12 @@ const SearchBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   {Auth.loggedIn() && (
                     <Button
-                      disabled={favsBookIds?.some((favId) => favId === book.bookId)}
+                      disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
                       className='btn-block btn-info'
                       onClick={() => handleSaveBook(book.bookId)}>
-                      {favsBookIds?.some((favId) => favId === book.bookId)
-                        ? 'Book Already Saved!'
-                        : 'Save This Book!'}
+                      {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
+                        ? 'This book has already been saved!'
+                        : 'Save this Book!'}
                     </Button>
                   )}
                 </Card.Body>
