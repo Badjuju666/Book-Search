@@ -1,6 +1,6 @@
 import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
-import { possessive } from '../utils/helpers'
+import { possessive } from '../utils/asist'
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_ME } from '../utils/queries';
