@@ -2,10 +2,10 @@
   "name": "googlebooks-app",
   "version": "1.0.0",
   "description": "",
-  "main": "server/server.js", 
+  "main": "Server/server.js",
   "engines": {
-    "node": "12.11.1" 
-},
+    "node": "12.11.1"
+  },
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:prod": "cd server && npm start",
@@ -24,6 +24,6 @@
     "if-env": "^1.0.4"
   },
   "devDependencies": {
-    "concurrently": "^5.2.0"
+    "concurrently": "^5.3.0"
   }
 }
