@@ -4,13 +4,14 @@
   "description": "",
   "main": "Server/server.js",
   "engines": {
-    "node": "12.11.1"
+    "node": "14.16.0",
+    "npm": "6.14.11"
   },
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:prod": "cd server && npm start",
-    "start:dev": "concurrently \"cd server && npm run watch\" \"cd client && npm start\"",
-    "install": "cd server && npm i && cd ../client && npm i",
+    "start:prod": "cd Server && npm start",
+    "start:dev": "concurrently \"cd Server && npm run watch\" \"cd client && npm start\"",
+    "install": "cd Server && npm i && cd ../client && npm i",
     "heroku-postbuild": "cd client && npm run build"
   },
   "repository": {
