@@ -24,7 +24,7 @@
 **- Go ahead and register a fake (or real) account and make a post to see it in action :). **
 
 ## Example 
-  (https://raw.githubusercontent.com/Badjuju666/Book-Search/main/Books4YU.png)
+ ![pic](https://raw.githubusercontent.com/Badjuju666/Book-Search/main/Books4YU.png)
 ## License
 
 ## Deployed App link
