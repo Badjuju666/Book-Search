@@ -1,5 +1,5 @@
-# **Media World**
-**Book Keeper App**
+# Book Keeper!
+**Book Finder App**
 
   [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
   
@@ -21,12 +21,10 @@
   -  Using React, Graphql, and several JS applications, you are now able to read! read! read!
 
 ## Usage
-#### **- Run**
-          $ npm start
 **- Go ahead and register a fake (or real) account and make a post to see it in action :). **
 
 ## Example 
-  [prettyoicture]()
+  [prettyoicture](https://raw.githubusercontent.com/Badjuju666/Book-Search/main/Books4YU.png)
 ## License
 
 ## Deployed App link
