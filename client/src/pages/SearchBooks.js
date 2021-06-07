@@ -75,9 +75,8 @@ const SearchBooks = () => {
     }
   };
 
-  // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
-    // find the book in `searchedBooks` state by the matching id
+  
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
     // get token
@@ -98,12 +97,13 @@ const SearchBooks = () => {
         throw new Error('something went wrong!');
       }
 
-      // if book successfully saves to user's account, save book id to state
+  
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
     }
   };
+
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>
@@ -135,17 +135,17 @@ const SearchBooks = () => {
         <h2>
           {searchedBooks.length
             ? `Viewing ${searchedBooks.length} results:`
-            : 'Search for a book to begin'}
+            : message}
         </h2>
         <CardColumns>
-          {searchedBooks.map((book) => {
+          {searchedBooks && searchedBooks.map((book) => {
             return (
               <Card key={book.bookId} border='dark'>
                 {book.image ? (
                   <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
                 ) : null}
                 <Card.Body>
-                  <Card.Title>{book.title}</Card.Title>
+                  <Card.Title><a target="_blank" rel="noreferrer" href={book.link}>{book.title}</a></Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
                   {Auth.loggedIn() && (
@@ -154,7 +154,7 @@ const SearchBooks = () => {
                       className='btn-block btn-info'
                       onClick={() => handleSaveBook(book.bookId)}>
                       {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
-                        ? 'This book has already been saved!'
+                        ? 'Already saved!'
                         : 'Save this Book!'}
                     </Button>
                   )}
